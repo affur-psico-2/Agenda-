@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dotación de personal 2019–2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{--paper:#F2F1EC;--paper-2:#EAE8E1;--ink:#15181D;--ink-soft:#4B4A45;--blue:#1F4E79;--brick:#8C3B2E;--gray:#807E76;--line:#CFCCC1;--serif:'Source Serif 4',Georgia,serif;--sans:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono','Courier New',monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--ink);color:var(--ink)}
+.slide{scroll-snap-align:start;width:100vw;height:100vh;min-height:720px;background:var(--paper);display:flex;flex-direction:column;padding:5vh 6vw;overflow:hidden}
+.letterhead{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:auto}
+.slide-num{font-family:var(--mono);font-size:11px;color:var(--gray)}
+.content{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:1200px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+h1{font-family:var(--serif);font-weight:600;line-height:1.05;color:var(--ink)}
+#s1 h1{font-size:clamp(38px,5.5vw,72px);margin-top:8px}
+#s1 .sub{font-size:20px;color:var(--ink-soft);margin-top:20px}
+#s1 .meta{margin-top:auto;display:flex;gap:40px;font-family:var(--mono);font-size:12px;color:var(--gray);border-top:1px solid var(--line);padding-top:16px}
+.dots{position:fixed;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:10}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s;border:none}
+.dot.active{background:#fff}
+
+.summary-box{margin-top:22px;background:var(--paper-2);border:1px solid var(--line);padding:18px 22px;border-radius:4px;max-width:980px}
+.summary-box p{font-size:15px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px}
+.summary-table{width:100%;border-collapse:collapse;font-size:14px}
+.summary-table th,.summary-table td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+.summary-table th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--gray)}
+.summary-table td:nth-child(2),.summary-table td:nth-child(3),.summary-table td:nth-child(4){text-align:center;font-family:var(--mono)}
+.pos{color:var(--blue)} .neg{color:var(--brick)} .zero{color:var(--gray)}
+.section-content{justify-content:flex-start;padding-top:2vh;max-width:1320px}
+.section-title{font-size:clamp(24px,2.6vw,32px)}
+.card-grid{display:grid;gap:16px;margin-top:20px}
+.card-grid.three{grid-template-columns:repeat(3,1fr)}
+.card-grid.two{grid-template-columns:repeat(2,1fr);max-width:900px}
+.dept-card{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:14px 14px 16px;display:flex;flex-direction:column;min-height:510px}
+.card-header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card-title{font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.08;max-width:78%}
+.card-diff{font-family:var(--mono);font-size:18px;padding-top:4px}
+.card-note{margin-top:8px;font-size:13px;line-height:1.42;color:var(--ink-soft);min-height:52px}
+.top-flex{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-top:8px}
+.bars{display:flex;gap:28px;align-items:flex-end;justify-content:center;min-height:145px;position:relative;padding-bottom:26px}
+.bars::after{content:'';position:absolute;left:0;right:0;bottom:20px;height:1px;background:var(--line)}
+.bar-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;z-index:1;min-width:72px}
+.bar{width:50px;border-radius:4px 4px 0 0}
+.bar.y19{background:var(--gray);opacity:.85}
+.bar.y26{background:var(--blue)}
+.bar-num{font-family:var(--mono);font-size:18px;margin-top:8px}
+.bar-lbl{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--gray);margin-top:2px}
+.mini-total{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--gray);text-align:right}
+.mini-total span{display:block;font-size:22px;color:var(--ink);font-family:var(--serif);font-weight:600;letter-spacing:0;text-transform:none;margin-top:4px}
+.org-wrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:center;flex:1}
+.org-top{background:#F8F7F3;border:1px solid var(--line);border-radius:4px;padding:8px 14px;font-size:13px;font-weight:600;min-width:140px;text-align:center}
+.org-stem{width:1px;height:14px;background:var(--line)}
+.branches{width:100%;display:grid;gap:8px;align-items:start}
+.branches.cols-1{grid-template-columns:1fr;max-width:220px}
+.branches.cols-2{grid-template-columns:repeat(2,1fr)}
+.branches.cols-3{grid-template-columns:repeat(3,1fr)}
+.branches.cols-4{grid-template-columns:repeat(4,1fr)}
+.branch{display:flex;flex-direction:column;align-items:center}
+.node.main{background:#F8F7F3;border:1px solid var(--line);border-radius:4px;padding:8px 8px 7px;width:100%;min-height:60px;text-align:center;font-size:12px;font-weight:600;line-height:1.25;display:flex;flex-direction:column;justify-content:center}
+.branch-note{font-family:var(--mono);font-size:10px;color:var(--gray);margin-top:4px;line-height:1.2}
+.branch-line{width:1px;height:12px;background:var(--line)}
+.subboxes{display:flex;flex-direction:column;gap:6px;width:100%}
+.subbox{background:#fff;border:1px solid var(--line);border-radius:4px;padding:6px 6px;min-height:34px;text-align:center;font-size:11px;line-height:1.2;display:flex;align-items:center;justify-content:center}
+.subbox.empty{color:var(--gray)}
+
+@media (max-width:1200px){
+  .slide{height:auto;min-height:100vh;overflow:visible}
+  .card-grid.three,.card-grid.two{grid-template-columns:1fr;max-width:none}
+  .dept-card{min-height:auto}
+}
+@media (max-width:760px){
+  .slide{padding:4.5vh 4vw}
+  #s1 h1{font-size:34px}
+  .card-title{font-size:21px}
+  .card-note{min-height:auto}
+  .top-flex{flex-direction:column;align-items:flex-start}
+  .branches.cols-4{grid-template-columns:repeat(2,1fr)}
+  .branches.cols-3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="dots" id="dots"></div>
+
+<section class="slide" id="s1">
+  <div class="letterhead">
+    <span>Facultad de Psicología · Udelar</span>
+    <span class="slide-num">01 / 06</span>
+  </div>
+  <div class="content">
+    <div class="eyebrow">Informe de cargo — período 2023–2026</div>
+    <h1>Dotación de personal<br>2019 → 2026</h1>
+    <p class="sub">Barras paralelas por dependencia y distribución interna por secciones</p>
+  </div>
+  <div class="meta">
+    <span>Gris: 2019 · Azul: 2026</span>
+    <span>Organización interna por secciones</span>
+  </div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="letterhead">
+    <span>Resumen</span>
+    <span class="slide-num">02 / 06</span>
+  </div>
+  <div class="content">
+    <div class="eyebrow">Tabla comparativa</div>
+    <h1 style="font-size:clamp(28px,3vw,36px);">Resumen general de totales</h1>
+    <div class="summary-box">
+      <p>Se sustituye la gráfica global por una tabla simple de 2019 y 2026. El detalle fino aparece después, en cada dependencia, con sus secciones y su distribución interna.</p>
+      <table class="summary-table">
+        <thead><tr><th>Dependencia</th><th>2019</th><th>2026</th><th>Diferencia</th></tr></thead>
+        <tbody><tr><td>Recursos Materiales</td><td>8</td><td>6</td><td class="neg">−2</td></tr><tr><td>Secretaría</td><td>13</td><td>14</td><td class="pos">+1</td></tr><tr><td>Contaduría</td><td>11</td><td>10</td><td class="neg">−1</td></tr><tr><td>Intendencia</td><td>37</td><td>32</td><td class="neg">−5</td></tr><tr><td>Enseñanza</td><td>16</td><td>15</td><td class="neg">−1</td></tr><tr><td>Biblioteca</td><td>13</td><td>12</td><td class="neg">−1</td></tr><tr><td>Secretaría de Grado y Posgrado</td><td>3</td><td>4</td><td class="pos">+1</td></tr><tr><td>Secretarías dispersas, Dirección de División, Decanato, centros y SAPPA</td><td>8</td><td>13</td><td class="pos">+5</td></tr><tr><td>Comunicación</td><td>8</td><td>9</td><td class="pos">+1</td></tr><tr><td>Informática</td><td>6</td><td>5</td><td class="neg">−1</td></tr><tr><td>Gestión Edilicia</td><td>3</td><td>3</td><td class="zero">0</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide" id="s3">
+  <div class="letterhead">
+    <span>Gráficas por dependencia</span>
+    <span class="slide-num">03 / 06</span>
+  </div>
+  <div class="content section-content">
+    <div class="eyebrow">Departamentos administrativos</div>
+    <h1 class="section-title">Comparación y distribución por secciones</h1>
+    <div class="card-grid three">
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Recursos Materiales</div>
+        <div class="card-diff neg">−2</div>
+      </div>
+      <div class="card-note">Se gana una Dirección C14; se pierde el cargo de Archivo.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:24px;"></div>
+            <div class="bar-num">8</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:18px;"></div>
+            <div class="bar-num">6</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>8 → 6</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 0→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-3">
+        <div class="branch">
+          <div class="node main">Compras<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Suministros<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Archivo<div class="branch-note">Cargo 1→0</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox empty">—</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Secretaría</div>
+        <div class="card-diff pos">+1</div>
+      </div>
+      <div class="card-note">Incluye Anexo Mercedes: 1 jefatura y 1 operativo.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:39px;"></div>
+            <div class="bar-num">13</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:42px;"></div>
+            <div class="bar-num">14</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>13 → 14</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-4">
+        <div class="branch">
+          <div class="node main">Personal<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 4→5</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Cogobierno<div class="branch-note">Jef. 0→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Concursos<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Anexo Mercedes<div class="branch-note">Jef. 0→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 0→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Contaduría</div>
+        <div class="card-diff neg">−1</div>
+      </div>
+      <div class="card-note">Se suma una jefatura y se pierde un operativo.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:33px;"></div>
+            <div class="bar-num">11</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:30px;"></div>
+            <div class="bar-num">10</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>11 → 10</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-4">
+        <div class="branch">
+          <div class="node main">Sueldos<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Gastos<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Tesorería<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Contab. y Control<div class="branch-note">Jef. 0→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="letterhead">
+    <span>Gráficas por dependencia</span>
+    <span class="slide-num">04 / 06</span>
+  </div>
+  <div class="content section-content">
+    <div class="eyebrow">Servicios administrativos centrales</div>
+    <h1 class="section-title">Comparación y distribución por secciones</h1>
+    <div class="card-grid three">
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Intendencia</div>
+        <div class="card-diff neg">−5</div>
+      </div>
+      <div class="card-note">Se pierden dos jefaturas; los operativos suben de 28 a 29. En 2019 había 4 vacantes.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:110px;"></div>
+            <div class="bar-num">37</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:95px;"></div>
+            <div class="bar-num">32</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>37 → 32</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-4">
+        <div class="branch">
+          <div class="node main">Vigilancia<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 13→13</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Public. y Mensaj.<div class="branch-note">Jef. 0→0</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Gestión Ambiental<div class="branch-note">Jef. 3→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 13→14</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Vacantes 2019<div class="branch-note">4→0</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox empty">—</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Enseñanza</div>
+        <div class="card-diff neg">−1</div>
+      </div>
+      <div class="card-note">Se pierden 2 operativos y se suma 1 becaria.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:48px;"></div>
+            <div class="bar-num">16</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:45px;"></div>
+            <div class="bar-num">15</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>16 → 15</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-3">
+        <div class="branch">
+          <div class="node main">Cursos y Exámenes<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 7→6</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Reválidas, Títulos y Salones<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 3→2</div><div class="subbox">Bec. 0→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Posgrados y FP<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Biblioteca</div>
+        <div class="card-diff neg">−1</div>
+      </div>
+      <div class="card-note">Jefaturas 3→2. Se mantiene 1 becaria y crece la dotación operativa.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:39px;"></div>
+            <div class="bar-num">13</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:36px;"></div>
+            <div class="bar-num">12</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>13 → 12</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Dirección 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-4">
+        <div class="branch">
+          <div class="node main">Documentación<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Adquisiciones<div class="branch-note">Jef. 1→0</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 0→0</div><div class="subbox">Vac. 2→0</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Préstamos<div class="branch-note">Jef. 1→1</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→3</div><div class="subbox">Bec. 1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Referencia<div class="branch-note">Jef. vacante</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 0→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="letterhead">
+    <span>Gráficas por dependencia</span>
+    <span class="slide-num">05 / 06</span>
+  </div>
+  <div class="content section-content">
+    <div class="eyebrow">Secretarías, programas y comunicación</div>
+    <h1 class="section-title">Comparación y distribución por secciones</h1>
+    <div class="card-grid three">
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Secretaría de Grado y Posgrado</div>
+        <div class="card-diff pos">+1</div>
+      </div>
+      <div class="card-note">Se pierde la jefatura; se consolidan 3 operativos y se suma 1 pasante.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:9px;"></div>
+            <div class="bar-num">3</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:12px;"></div>
+            <div class="bar-num">4</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>3 → 4</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Jefatura 1→0</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-3">
+        <div class="branch">
+          <div class="node main">Grado</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→1</div><div class="subbox">Pas. 0→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Posgrado / Maestrías</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 0→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Doctorado<div class="branch-note">Nueva función</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 0→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Secretarías dispersas, Dirección de División, Decanato, centros y SAPPA</div>
+        <div class="card-diff pos">+5</div>
+      </div>
+      <div class="card-note">Agrupa institutos, Secretaría de División, Decanato, SAGIRNI, PROREN, centros y SAPPA.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:24px;"></div>
+            <div class="bar-num">8</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:39px;"></div>
+            <div class="bar-num">13</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>8 → 13</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Conjunto de apoyos</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-4">
+        <div class="branch">
+          <div class="node main">Secretaría de División</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Institutos</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 5→5</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">SAGIRNI + PROREN</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Decanato</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Pas. 0→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">SAPPA</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Pas. 0→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Centros de investigación<div class="branch-note">CIC-P, CEIS, CIBPsi</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Bec./Pas. 0→3</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Comunicación</div>
+        <div class="card-diff pos">+1</div>
+      </div>
+      <div class="card-note">Se agrega 1 pasante por Yo estudio y trabajo.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:24px;"></div>
+            <div class="bar-num">8</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:27px;"></div>
+            <div class="bar-num">9</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>8 → 9</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Coordinación 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-3">
+        <div class="branch">
+          <div class="node main">Comunicación Institucional</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→5</div><div class="subbox">Pas. 2→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Medios Audiovisuales</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 2→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Yo estudio y trabajo<div class="branch-note">2026</div></div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Pas. 0→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="letterhead">
+    <span>Gráficas por dependencia</span>
+    <span class="slide-num">06 / 06</span>
+  </div>
+  <div class="content section-content">
+    <div class="eyebrow">Unidades técnicas y de apoyo</div>
+    <h1 class="section-title">Comparación y distribución por secciones</h1>
+    <div class="card-grid two">
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Informática</div>
+        <div class="card-diff neg">−1</div>
+      </div>
+      <div class="card-note">Según la unidad, se pierde 1 operativo.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:18px;"></div>
+            <div class="bar-num">6</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:15px;"></div>
+            <div class="bar-num">5</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>6 → 5</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Coordinación 1→1</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-2">
+        <div class="branch">
+          <div class="node main">Unidad de Informática</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Oper. 3→2</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Pasantías</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">Pas. 2→2</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dept-card">
+      <div class="card-header">
+        <div class="card-title">Gestión Edilicia</div>
+        <div class="card-diff zero">0</div>
+      </div>
+      <div class="card-note">Se mantiene igual; articula su trabajo con Intendencia.</div>
+      <div class="top-flex">
+        <div class="bars">
+          <div class="bar-col">
+            <div class="bar y19" style="height:9px;"></div>
+            <div class="bar-num">3</div>
+            <div class="bar-lbl">2019</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar y26" style="height:9px;"></div>
+            <div class="bar-num">3</div>
+            <div class="bar-lbl">2026</div>
+          </div>
+        </div>
+        <div class="mini-total">Total<br><span>3 → 3</span></div>
+      </div>
+      <div class="org-wrap">
+        <div class="org-top">Unidad 3→3</div>
+        <div class="org-stem"></div>
+        <div class="branches cols-3">
+        <div class="branch">
+          <div class="node main">Arquitectura</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Electricidad</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">1→1</div></div>
+        </div>
+        
+        <div class="branch">
+          <div class="node main">Mantenimiento</div>
+          <div class="branch-line"></div>
+          <div class="subboxes"><div class="subbox">1→1</div></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsContainer = document.getElementById('dots');
+slides.forEach((s, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => s.scrollIntoView({behavior:'smooth'}));
+  dotsContainer.appendChild(dot);
+});
+const dots = document.querySelectorAll('.dot');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = Array.from(slides).indexOf(entry.target);
+      dots.forEach(d => d.classList.remove('active'));
+      dots[idx].classList.add('active');
+    }
+  });
+}, {threshold:.6});
+slides.forEach(s => observer.observe(s));
+document.addEventListener('keydown', (e) => {
+  const current = Math.max(0, Array.from(slides).findIndex(s => {
+    const r = s.getBoundingClientRect();
+    return r.top >= -10 && r.top < window.innerHeight/2;
+  }));
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+    e.preventDefault();
+    const next = slides[Math.min(current+1, slides.length-1)];
+    next && next.scrollIntoView({behavior:'smooth'});
+  }
+  if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault();
+    const prev = slides[Math.max(current-1, 0)];
+    prev && prev.scrollIntoView({behavior:'smooth'});
+  }
+});
+</script>
+</body>
+</html>
